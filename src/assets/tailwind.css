@@ -4,8 +4,9 @@
 @import 'tailwindcss/components';
 @import './primevue/tailwind.css';
 @import 'tailwindcss/utilities';
+@import 'primeicons/primeicons.css';
 
 html {
-    width: 400px;
-    height: 450px;
-  }
+  width: 400px;
+  height: 450px;
+}

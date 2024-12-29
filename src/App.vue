@@ -1,12 +1,15 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const visibleRight = ref(false)
+</script>
 <template>
-  <div class="mt-10 flex justify-center flex-wrap gap-4">
-    <Button label="Primary" />
-    <Button label="Secondary" severity="secondary" />
-    <Button label="Success" severity="success" />
-    <Button label="Info" severity="info" />
-    <Button label="Warn" severity="warn" />
-    <Button label="Help" severity="help" />
-    <Button label="Danger" severity="danger" />
-    <Button label="Contrast" severity="contrast" />
+  <div class="m-2">
+    <div class="w-full flex justify-end">
+      <Button icon="pi pi-list" @click="visibleRight = true" />
+    </div>
+    <Drawer v-model:visible="visibleRight" header="Task List" position="right">
+      <p>sample</p>
+    </Drawer>
   </div>
 </template>
