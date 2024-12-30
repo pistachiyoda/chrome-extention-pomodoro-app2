@@ -9,7 +9,18 @@ const time = ref(Time)
 const intervalId = ref<ReturnType<typeof setInterval>>()
 const isTaskListVisible = ref(false)
 
-const taskList = ref<Task[]>(JSON.parse(localStorage.getItem('taskList') || '[]'))
+const getStoredTaskList = (): Task[] => {
+  try {
+    const stored = localStorage.getItem('taskList')
+    if (!stored) return []
+    return JSON.parse(stored)
+  } catch (error) {
+    console.error(error)
+    return []
+  }
+}
+const taskList = ref<Task[]>(getStoredTaskList())
+
 const addTask = (newTaskContent: string) => {
   const newTask = {
     id: Date.now(),
@@ -17,7 +28,11 @@ const addTask = (newTaskContent: string) => {
     isCompleted: false,
   }
   taskList.value.push(newTask)
-  localStorage.setItem('taskList', JSON.stringify(taskList.value))
+  try {
+    localStorage.setItem('taskList', JSON.stringify(taskList.value))
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 const startTimer = () => {

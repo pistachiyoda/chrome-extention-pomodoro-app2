@@ -5,9 +5,9 @@ import { ref } from 'vue'
 const isTaskListVisible = defineModel<boolean>('visible')
 const taskList = defineModel<Task[]>('taskList')
 const newTaskContent = ref<string>('')
-const emit = defineEmits(['addTask'])
+const emit = defineEmits(['add-task'])
 const addTask = () => {
-  emit('addTask', newTaskContent.value)
+  emit('add-task', newTaskContent.value)
   newTaskContent.value = ''
 }
 </script>
