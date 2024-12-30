@@ -1,8 +1,15 @@
 <script setup lang="ts">
 import type { Task } from '@/types'
+import { ref } from 'vue'
 
 const isTaskListVisible = defineModel<boolean>('visible')
 const taskList = defineModel<Task[]>('taskList')
+const newTaskContent = ref<string>('')
+const emit = defineEmits(['add-task'])
+const addTask = () => {
+  emit('add-task', newTaskContent.value)
+  newTaskContent.value = ''
+}
 </script>
 
 <template>
@@ -32,5 +39,9 @@ const taskList = defineModel<Task[]>('taskList')
         </tr>
       </tbody>
     </table>
+    <IconField>
+      <InputIcon class="pi pi-plus" />
+      <InputText v-model="newTaskContent" placeholder="Add task" @keydown.enter="addTask" />
+    </IconField>
   </Drawer>
 </template>

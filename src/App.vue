@@ -9,33 +9,31 @@ const time = ref(Time)
 const intervalId = ref<ReturnType<typeof setInterval>>()
 const isTaskListVisible = ref(false)
 
-const tasks = ref<Task[]>([
-  {
-    id: 1,
-    content: 'Vue.jsの学習',
+const getStoredTaskList = (): Task[] => {
+  try {
+    const stored = localStorage.getItem('taskList')
+    if (!stored) return []
+    return JSON.parse(stored)
+  } catch (error) {
+    console.error(error)
+    return []
+  }
+}
+const taskList = ref<Task[]>(getStoredTaskList())
+
+const addTask = (newTaskContent: string) => {
+  const newTask = {
+    id: Date.now(),
+    content: newTaskContent,
     isCompleted: false,
-  },
-  {
-    id: 2,
-    content: 'プロジェクトの設計書作成',
-    isCompleted: false,
-  },
-  {
-    id: 3,
-    content: 'メール返信',
-    isCompleted: false,
-  },
-  {
-    id: 4,
-    content: 'ランディングページのデザイン作成',
-    isCompleted: false,
-  },
-  {
-    id: 5,
-    content: 'コードレビュー',
-    isCompleted: false,
-  },
-])
+  }
+  taskList.value.push(newTask)
+  try {
+    localStorage.setItem('taskList', JSON.stringify(taskList.value))
+  } catch (error) {
+    console.error(error)
+  }
+}
 
 const startTimer = () => {
   timerState.value = 'running'
@@ -88,6 +86,10 @@ onUnmounted(() => {
       ></Button>
       <Button v-if="timerState == 'finished'" label="Restart" @click="reStartTimer"></Button>
     </div>
-    <TaskList v-model:visible="isTaskListVisible" v-model:task-list="tasks" />
+    <TaskList
+      v-model:visible="isTaskListVisible"
+      v-model:task-list="taskList"
+      @add-task="addTask"
+    />
   </div>
 </template>
