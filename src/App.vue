@@ -1,11 +1,41 @@
 <script setup lang="ts">
-import type { TimerState } from './types'
 import { ref, onUnmounted } from 'vue'
+import type { TimerState, Task } from './types'
+import TaskList from './components/TaskList.vue'
 
 const timerState = ref<TimerState>('idle')
 const Time = 60 * 25
 const time = ref(Time)
 const intervalId = ref<ReturnType<typeof setInterval>>()
+const isTaskListVisible = ref(false)
+
+const tasks = ref<Task[]>([
+  {
+    id: 1,
+    content: 'Vue.jsの学習',
+    isCompleted: false,
+  },
+  {
+    id: 2,
+    content: 'プロジェクトの設計書作成',
+    isCompleted: false,
+  },
+  {
+    id: 3,
+    content: 'メール返信',
+    isCompleted: false,
+  },
+  {
+    id: 4,
+    content: 'ランディングページのデザイン作成',
+    isCompleted: false,
+  },
+  {
+    id: 5,
+    content: 'コードレビュー',
+    isCompleted: false,
+  },
+])
 
 const startTimer = () => {
   timerState.value = 'running'
@@ -31,13 +61,11 @@ const stopTimer = () => {
 onUnmounted(() => {
   clearInterval(intervalId.value)
 })
-
-const visibleRight = ref(false)
 </script>
 <template>
   <div class="m-2">
     <div class="w-full flex justify-end">
-      <Button icon="pi pi-list" @click="visibleRight = true" />
+      <Button icon="pi pi-list" @click="isTaskListVisible = true" />
     </div>
     <div class="flex flex-col gap-2 justify-center items-center">
       <div class="text-4xl">
@@ -60,8 +88,6 @@ const visibleRight = ref(false)
       ></Button>
       <Button v-if="timerState == 'finished'" label="Restart" @click="reStartTimer"></Button>
     </div>
-    <Drawer v-model:visible="visibleRight" header="Task List" position="right">
-      <p>sample</p>
-    </Drawer>
+    <TaskList v-model:visible="isTaskListVisible" v-model:task-list="tasks" />
   </div>
 </template>
