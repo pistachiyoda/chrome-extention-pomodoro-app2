@@ -11,32 +11,13 @@ const isTaskListVisible = ref(false)
 
 const taskList = ref<Task[]>(JSON.parse(localStorage.getItem('taskList') || '[]'))
 const addTask = (newTaskContent: string) => {
-  const newTaskList = !taskList.value
-    ? [
-        {
-          id: Date.now(),
-          content: newTaskContent,
-          isCompleted: false,
-        },
-      ]
-    : [
-        ...taskList.value,
-        {
-          id: Date.now(),
-          content: newTaskContent,
-          isCompleted: false,
-        },
-      ]
-
-  localStorage.setItem('taskList', JSON.stringify(newTaskList))
-  if (!localStorage.getItem('taskList')) {
-    throw new Error('Failed to save task list')
-  } else {
-    const taskListData = localStorage.getItem('taskList')
-    if (taskListData !== null) {
-      taskList.value = JSON.parse(taskListData)
-    }
+  const newTask = {
+    id: Date.now(),
+    content: newTaskContent,
+    isCompleted: false,
   }
+  taskList.value.push(newTask)
+  localStorage.setItem('taskList', JSON.stringify(taskList.value))
 }
 
 const startTimer = () => {
