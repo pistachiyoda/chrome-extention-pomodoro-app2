@@ -14,7 +14,7 @@ const addTask = (newTaskContent: string) => {
   const newTaskList = !taskList.value
     ? [
         {
-          id: '0',
+          id: Date.now(),
           content: newTaskContent,
           isCompleted: false,
         },
@@ -22,7 +22,7 @@ const addTask = (newTaskContent: string) => {
     : [
         ...taskList.value,
         {
-          id: taskList.value.length + 1,
+          id: Date.now(),
           content: newTaskContent,
           isCompleted: false,
         },
