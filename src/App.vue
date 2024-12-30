@@ -9,33 +9,35 @@ const time = ref(Time)
 const intervalId = ref<ReturnType<typeof setInterval>>()
 const isTaskListVisible = ref(false)
 
-const tasks = ref<Task[]>([
-  {
-    id: 1,
-    content: 'Vue.jsの学習',
-    isCompleted: false,
-  },
-  {
-    id: 2,
-    content: 'プロジェクトの設計書作成',
-    isCompleted: false,
-  },
-  {
-    id: 3,
-    content: 'メール返信',
-    isCompleted: false,
-  },
-  {
-    id: 4,
-    content: 'ランディングページのデザイン作成',
-    isCompleted: false,
-  },
-  {
-    id: 5,
-    content: 'コードレビュー',
-    isCompleted: false,
-  },
-])
+const taskList = ref<Task[]>(JSON.parse(localStorage.getItem('taskList') || '[]'))
+const addTask = (newTaskContent: string) => {
+  const newTaskList = !taskList.value
+    ? [
+        {
+          id: '0',
+          content: newTaskContent,
+          isCompleted: false,
+        },
+      ]
+    : [
+        ...taskList.value,
+        {
+          id: taskList.value.length + 1,
+          content: newTaskContent,
+          isCompleted: false,
+        },
+      ]
+
+  localStorage.setItem('taskList', JSON.stringify(newTaskList))
+  if (!localStorage.getItem('taskList')) {
+    throw new Error('Failed to save task list')
+  } else {
+    const taskListData = localStorage.getItem('taskList')
+    if (taskListData !== null) {
+      taskList.value = JSON.parse(taskListData)
+    }
+  }
+}
 
 const startTimer = () => {
   timerState.value = 'running'
@@ -88,6 +90,10 @@ onUnmounted(() => {
       ></Button>
       <Button v-if="timerState == 'finished'" label="Restart" @click="reStartTimer"></Button>
     </div>
-    <TaskList v-model:visible="isTaskListVisible" v-model:task-list="tasks" />
+    <TaskList
+      v-model:visible="isTaskListVisible"
+      v-model:task-list="taskList"
+      @add-task="addTask"
+    />
   </div>
 </template>
