@@ -19,26 +19,11 @@ const addTask = () => {
     position="right"
     class="!w-[460px]"
   >
-    <table class="border-separate border-spacing-x-2 border-spacing-y-1">
-      <thead>
-        <tr>
-          <th aria-label="Completed"></th>
-          <th aria-label="Task"></th>
-          <th>Plan</th>
-          <th>Actual</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="task in taskList" :key="task.id">
-          <td>
-            <input type="checkbox" :checked="task.isCompleted" disabled />
-          </td>
-          <td class="w-72">{{ task.content }}</td>
-          <td class="text-center">0</td>
-          <td class="text-center">0</td>
-        </tr>
-      </tbody>
-    </table>
+    <DataTable :value="taskList">
+      <Column rowReorder :reorderableColumn="false" headerStyle="width: 3rem"></Column>
+      <Column field="isCompleted" header="Completed" />
+      <Column field="content" header="Task" />
+    </DataTable>
     <IconField>
       <InputIcon class="pi pi-plus" />
       <InputText v-model="newTaskContent" placeholder="Add task" @keydown.enter="addTask" />
