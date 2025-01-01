@@ -35,6 +35,16 @@ const addTask = (newTaskContent: string) => {
   }
 }
 
+const updateTaskOrder = (newTaskList: Task[]) => {
+  console.log(newTaskList)
+  taskList.value = newTaskList
+  try {
+    localStorage.setItem('taskList', JSON.stringify(taskList.value))
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 const startTimer = () => {
   timerState.value = 'running'
   intervalId.value = setInterval(() => {
@@ -90,6 +100,7 @@ onUnmounted(() => {
       v-model:visible="isTaskListVisible"
       v-model:task-list="taskList"
       @add-task="addTask"
+      @update-task-order="updateTaskOrder"
     />
   </div>
 </template>

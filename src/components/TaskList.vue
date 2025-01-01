@@ -5,10 +5,13 @@ import { ref } from 'vue'
 const isTaskListVisible = defineModel<boolean>('visible')
 const taskList = defineModel<Task[]>('taskList')
 const newTaskContent = ref<string>('')
-const emit = defineEmits(['add-task'])
+const emit = defineEmits(['add-task', 'update-task-order'])
 const addTask = () => {
   emit('add-task', newTaskContent.value)
   newTaskContent.value = ''
+}
+const onRowReorder = (event: { value: Task[] }) => {
+  emit('update-task-order', event.value)
 }
 </script>
 
@@ -19,7 +22,7 @@ const addTask = () => {
     position="right"
     class="!w-[460px]"
   >
-    <DataTable :value="taskList">
+    <DataTable :value="taskList" :reorderableColumns="true" @rowReorder="onRowReorder">
       <Column rowReorder :reorderableColumn="false" headerStyle="width: 3rem"></Column>
       <Column field="isCompleted" header="Completed" />
       <Column field="content" header="Task" />
