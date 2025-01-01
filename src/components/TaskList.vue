@@ -3,15 +3,47 @@ import type { Task } from '@/types'
 import { ref } from 'vue'
 
 const isTaskListVisible = defineModel<boolean>('visible')
-const taskList = defineModel<Task[]>('taskList')
 const newTaskContent = ref<string>('')
-const emit = defineEmits(['add-task', 'update-task-order'])
+
+const getStoredTaskList = (): Task[] => {
+  try {
+    const stored = localStorage.getItem('taskList')
+    if (!stored) return []
+    return JSON.parse(stored)
+  } catch (error) {
+    console.error(error)
+    return []
+  }
+}
+const taskList = ref<Task[]>(getStoredTaskList())
+
 const addTask = () => {
-  emit('add-task', newTaskContent.value)
+  const newTask = {
+    id: Date.now(),
+    content: newTaskContent.value,
+    isCompleted: false,
+  }
+  taskList.value.push(newTask)
+  try {
+    localStorage.setItem('taskList', JSON.stringify(taskList.value))
+  } catch (error) {
+    console.error(error)
+  }
   newTaskContent.value = ''
 }
+
+const updateTaskOrder = (newTaskList: Task[]) => {
+  console.log(newTaskList)
+  taskList.value = newTaskList
+  try {
+    localStorage.setItem('taskList', JSON.stringify(taskList.value))
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 const onRowReorder = (event: { value: Task[] }) => {
-  emit('update-task-order', event.value)
+  updateTaskOrder(event.value)
 }
 </script>
 
