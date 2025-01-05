@@ -3,12 +3,47 @@ import type { Task } from '@/types'
 import { ref } from 'vue'
 
 const isTaskListVisible = defineModel<boolean>('visible')
-const taskList = defineModel<Task[]>('taskList')
 const newTaskContent = ref<string>('')
-const emit = defineEmits(['add-task'])
+
+const getStoredTaskList = (): Task[] => {
+  try {
+    const stored = localStorage.getItem('taskList')
+    if (!stored) return []
+    return JSON.parse(stored)
+  } catch (error) {
+    console.error(error)
+    return []
+  }
+}
+const taskList = ref<Task[]>(getStoredTaskList())
+
 const addTask = () => {
-  emit('add-task', newTaskContent.value)
+  const newTask = {
+    id: Date.now(),
+    content: newTaskContent.value,
+    isCompleted: false,
+  }
+  taskList.value.push(newTask)
+  try {
+    localStorage.setItem('taskList', JSON.stringify(taskList.value))
+  } catch (error) {
+    console.error(error)
+  }
   newTaskContent.value = ''
+}
+
+const updateTaskOrder = (newTaskList: Task[]) => {
+  console.log(newTaskList)
+  taskList.value = newTaskList
+  try {
+    localStorage.setItem('taskList', JSON.stringify(taskList.value))
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const onRowReorder = (event: { value: Task[] }) => {
+  updateTaskOrder(event.value)
 }
 </script>
 
@@ -19,26 +54,11 @@ const addTask = () => {
     position="right"
     class="!w-[460px]"
   >
-    <table class="border-separate border-spacing-x-2 border-spacing-y-1">
-      <thead>
-        <tr>
-          <th aria-label="Completed"></th>
-          <th aria-label="Task"></th>
-          <th>Plan</th>
-          <th>Actual</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="task in taskList" :key="task.id">
-          <td>
-            <input type="checkbox" :checked="task.isCompleted" disabled />
-          </td>
-          <td class="w-72">{{ task.content }}</td>
-          <td class="text-center">0</td>
-          <td class="text-center">0</td>
-        </tr>
-      </tbody>
-    </table>
+    <DataTable :value="taskList" :reorderableColumns="true" @rowReorder="onRowReorder">
+      <Column rowReorder :reorderableColumn="false" headerStyle="width: 3rem"></Column>
+      <Column field="isCompleted" header="Completed" />
+      <Column field="content" header="Task" />
+    </DataTable>
     <IconField>
       <InputIcon class="pi pi-plus" />
       <InputText v-model="newTaskContent" placeholder="Add task" @keydown.enter="addTask" />
