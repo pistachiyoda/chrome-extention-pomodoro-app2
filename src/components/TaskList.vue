@@ -46,7 +46,7 @@ const updateTaskList = (newTaskList: Task[]) => {
 const updateStatus = (task: Task) => {
   const newTaskList = taskList.value.map((t) => {
     if (t.id === task.id) {
-      t.isCompleted = task.isCompleted
+      return { ...t, isCompleted: task.isCompleted }
     }
     return t
   })
@@ -60,7 +60,7 @@ const onRowReorder = (event: { value: Task[] }) => {
 const onCellEditComplete = (event) => {
   const newTaskList = taskList.value.map((t) => {
     if (t.id === event.data.id) {
-      t.content = event.newValue
+      return { ...t, content: event.newValue }
     }
     return t
   })
@@ -71,7 +71,7 @@ const onCellEditComplete = (event) => {
 const addTomato = (task: Task) => {
   const newTaskList = taskList.value.map((t) => {
     if (t.id === task.id) {
-      t.plan++
+      return { ...t, plan: t.plan + 1 }
     }
     return t
   })
@@ -81,7 +81,7 @@ const addTomato = (task: Task) => {
 const reduceTomato = (task: Task) => {
   const newTaskList = taskList.value.map((t) => {
     if (t.id === task.id && t.plan > 1) {
-      t.plan--
+      return { ...t, plan: t.plan - 1 }
     }
     return t
   })
