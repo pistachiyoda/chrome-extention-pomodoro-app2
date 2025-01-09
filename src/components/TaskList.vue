@@ -80,7 +80,7 @@ const addTomato = (task: Task) => {
 
 const reduceTomato = (task: Task) => {
   const newTaskList = taskList.value.map((t) => {
-    if (t.id === task.id) {
+    if (t.id === task.id && t.plan > 1) {
       t.plan--
     }
     return t
@@ -126,20 +126,31 @@ const reduceTomato = (task: Task) => {
               <div class="absolute inset-0 flex justify-center items-center">
                 <img
                   src="/tomato.png"
-                  class="w-5 hover:opacity-30"
+                  alt="Planed Tomato"
+                  class="w-5 cursor-pointer"
+                  :class="[i > 1 ? 'hover:opacity-50' : '']"
                   @click="reduceTomato(slotProps.data)"
                 />
               </div>
               <div class="pi pi-times text-xs ml-1"></div>
             </div>
-            <span class="pi pi-plus-circle ml-1" @click="addTomato(slotProps.data)"></span>
+            <span
+              class="pi pi-plus-circle ml-1 cursor-pointer"
+              @click="addTomato(slotProps.data)"
+            ></span>
           </div>
         </template>
       </Column>
       <Column field="actual" header="Actual">
         <template #body="slotProps">
           <div class="w-12 flex justify-center items-center flex-wrap">
-            <img v-for="i in slotProps.data.actual" :key="i" src="/tomato.png" class="w-5" />
+            <img
+              v-for="i in slotProps.data.actual"
+              :key="i"
+              src="/tomato.png"
+              alt="Actual Tomato"
+              class="w-5"
+            />
           </div>
         </template>
       </Column>
