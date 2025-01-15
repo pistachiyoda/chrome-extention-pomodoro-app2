@@ -1,29 +1,24 @@
 <script setup lang="ts">
 import type { Task } from '@/types'
 import { ref } from 'vue'
+import { getStoredTaskList } from '@/utils'
 
 const isTaskListVisible = defineModel<boolean>('visible')
 const newTaskContent = ref<string>('')
 
-const getStoredTaskList = (): Task[] => {
-  try {
-    const stored = localStorage.getItem('taskList')
-    if (!stored) return []
-    return JSON.parse(stored)
-  } catch (error) {
-    console.error(error)
-    return []
-  }
-}
 const taskList = ref<Task[]>(getStoredTaskList())
 
 const addTask = () => {
   const newTask = {
     id: Date.now(),
     isCompleted: false,
+    isInProgress: false,
     content: newTaskContent.value,
     plan: 1,
     actual: 1,
+  }
+  if (taskList.value.length === 0) {
+    newTask.isInProgress = true
   }
   taskList.value.push(newTask)
   try {
@@ -33,7 +28,6 @@ const addTask = () => {
   }
   newTaskContent.value = ''
 }
-
 const updateTaskList = (newTaskList: Task[]) => {
   taskList.value = newTaskList
   try {
@@ -43,13 +37,23 @@ const updateTaskList = (newTaskList: Task[]) => {
   }
 }
 
+const setInprogressTask = (taskList: Task[]) => {
+  const i = taskList.findIndex((task) => task.isCompleted === false)
+  if (i === -1) {
+    alert('All tasks are completed!')
+    return
+  }
+  taskList[i].isInProgress = true
+}
+
 const updateStatus = (task: Task) => {
   const newTaskList = taskList.value.map((t) => {
     if (t.id === task.id) {
-      return { ...t, isCompleted: task.isCompleted }
+      return { ...t, status: task.isCompleted, isInProgress: false }
     }
     return t
   })
+  setInprogressTask(newTaskList)
   updateTaskList(newTaskList)
 }
 
