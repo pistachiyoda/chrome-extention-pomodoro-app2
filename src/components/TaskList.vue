@@ -50,7 +50,7 @@ const setInprogressTask = (taskList: Task[]) => {
 const updateStatus = (task: Task) => {
   const newTaskList = taskList.value.map((t) => {
     if (t.id === task.id) {
-      return { ...t, status: task.isCompleted, isInProgress: false }
+      return { ...t, isCompleted: task.isCompleted, isInProgress: false }
     }
     return t
   })
