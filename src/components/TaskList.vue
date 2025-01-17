@@ -2,6 +2,7 @@
 import type { Task } from '@/types'
 import { ref } from 'vue'
 import { getStoredTaskList } from '@/utils'
+import type { DataTableCellEditCompleteEvent } from 'primevue'
 
 const isTaskListVisible = defineModel<boolean>('visible')
 const newTaskContent = ref<string>('')
@@ -61,7 +62,8 @@ const onRowReorder = (event: { value: Task[] }) => {
   updateTaskList(event.value)
 }
 
-const onCellEditComplete = (event) => {
+const onCellEditComplete = (event: DataTableCellEditCompleteEvent) => {
+  console.log(event)
   const newTaskList = taskList.value.map((t) => {
     if (t.id === event.data.id) {
       return { ...t, content: event.newValue }

@@ -58,7 +58,7 @@ onUnmounted(() => {
           class="w-5 cursor-pointer"
         />
       </div>
-      <p class="text-4xl">
+      <p v-if="currentTask" class="text-4xl">
         {{ currentTask.content }}
       </p>
       <div class="text-4xl">
@@ -66,7 +66,7 @@ onUnmounted(() => {
           String(time % 60).padStart(2, '0')
         }}
       </div>
-      <div class="flex">
+      <div v-if="currentTask" class="flex">
         <img
           v-for="tomato in currentTask.plan"
           :key="tomato"
