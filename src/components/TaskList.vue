@@ -74,23 +74,8 @@ const onCellEditComplete = (event: DataTableCellEditCompleteEvent) => {
   updateTaskList(newTaskList)
 }
 
-const addTomato = (task: Task) => {
-  const newTaskList = taskList.value.map((t) => {
-    if (t.id === task.id) {
-      return { ...t, plan: t.plan + 1 }
-    }
-    return t
-  })
-  updateTaskList(newTaskList)
-}
-
-const reduceTomato = (task: Task) => {
-  const newTaskList = taskList.value.map((t) => {
-    if (t.id === task.id && t.plan > 1) {
-      return { ...t, plan: t.plan - 1 }
-    }
-    return t
-  })
+const deleteTask = (task: Task) => {
+  const newTaskList = taskList.value.filter((t) => t.id !== task.id)
   updateTaskList(newTaskList)
 }
 </script>
@@ -110,8 +95,8 @@ const reduceTomato = (task: Task) => {
       @cell-edit-complete="onCellEditComplete"
       class="mb-3"
     >
-      <Column rowReorder :reorderableColumn="false"></Column>
-      <Column field="Completed">
+      <Column rowReorder :reorderableColumn="false" class=""></Column>
+      <Column field="Completed" class="">
         <template #body="slotProps">
           <Checkbox
             v-model="slotProps.data.isCompleted"
@@ -120,44 +105,15 @@ const reduceTomato = (task: Task) => {
           />
         </template>
       </Column>
-      <Column field="content" header="Task" class="w-40">
+      <Column field="content" class="w-72 text-sm">
         <template #editor="{ data }">
           <InputText v-model="data.content" class="w-40" />
         </template>
       </Column>
-      <Column field="plan" header="Plan" class="w-10">
+
+      <Column field="Completed" class="">
         <template #body="slotProps">
-          <div class="w-12 flex justify-center items-center flex-wrap">
-            <div v-for="i in slotProps.data.plan" :key="i" class="w-5 relative">
-              <div class="absolute inset-0 flex justify-center items-center">
-                <img
-                  src="/tomato.png"
-                  alt="Planed Tomato"
-                  class="w-5 cursor-pointer"
-                  :class="[i > 1 ? 'hover:opacity-50' : '']"
-                  @click="reduceTomato(slotProps.data)"
-                />
-              </div>
-              <div class="pi pi-times text-xs ml-1"></div>
-            </div>
-            <span
-              class="pi pi-plus-circle ml-1 cursor-pointer"
-              @click="addTomato(slotProps.data)"
-            ></span>
-          </div>
-        </template>
-      </Column>
-      <Column field="actual" header="Actual">
-        <template #body="slotProps">
-          <div class="w-12 flex justify-center items-center flex-wrap">
-            <img
-              v-for="i in slotProps.data.actual"
-              :key="i"
-              src="/tomato.png"
-              alt="Actual Tomato"
-              class="w-5"
-            />
-          </div>
+          <span class="pi pi-trash cursor-pointer" @click="deleteTask(slotProps.data)"></span>
         </template>
       </Column>
     </DataTable>
